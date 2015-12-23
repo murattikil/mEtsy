@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "outDir": "js"
+    },
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!node_modules/**"
+    ],
+    "compileOnSave": true,
+    "buildOnSave": false,
+    "files": [
+        "typescript/Background.ts",
+        "typescript/Content.ts",
+        "typescript/Crawler.ts",
+        "typescript/Database.ts",
+        "typescript/Globals.ts",
+        "typescript/Helpers.ts",
+        "typings/chrome/chrome.d.ts",
+        "typings/es6-promise/es6-promise.d.ts",
+        "typings/filesystem/filesystem.d.ts",
+        "typings/filewriter/filewriter.d.ts",
+        "typings/jquery/jquery.d.ts",
+        "typings/lodash/lodash.d.ts",
+        "typings/moment/moment-node.d.ts",
+        "typings/moment/moment.d.ts",
+        "typings/q/Q.d.ts",
+        "typings/webrtc/MediaStream.d.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}
