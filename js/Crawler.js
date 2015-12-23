@@ -2,6 +2,7 @@ var Crawler = (function () {
     function Crawler() {
         this.globals = new Globals();
         this.helpers = new Helpers();
+        this.that = this;
     }
     Crawler.prototype.start = function () {
         if (this.globals.enableCrawler != true) {
@@ -25,13 +26,16 @@ var Crawler = (function () {
         }
     };
     Crawler.prototype.faveItemsForYou = function () {
+        var that = this;
         var p = new Promise(function (resolve, reject) {
-            this.faveAllOnThisPage(resolve);
+            setTimeout(function () {
+                that.faveAllOnThisPage(resolve);
+            }, that.globals.delayAfterPageLoad);
         });
         p.then(function () {
-            var nextPage = this.getNextPage();
+            var nextPage = that.getNextPage();
             if (nextPage > 0) {
-                this.helpers.gotoUrl(this.globals.urlTemplate.itemsForYou({ username: this.helpers.getUserFromPageUrl(), page: nextPage }));
+                that.helpers.gotoUrl(that.globals.urlTemplate.itemsForYou({ username: that.helpers.getUserFromPageUrl(), page: nextPage }));
             }
         });
     };
@@ -51,19 +55,22 @@ var Crawler = (function () {
             return parseInt(next.text());
     };
     Crawler.prototype.faveAllOnThisPage = function (resolve) {
+        var that = this;
         var $buttons = $("button.btn-fave").not(".done");
+        console.log("CRAWLER: Found ", $buttons.length, " not faved items on this page. Starting to fav them.");
         var p = new Promise(function (resolve, reject) {
-            this.faveItems($buttons, 0, resolve);
+            that.faveItems($buttons, 0, resolve);
         });
         p.then(function () {
             resolve();
         });
     };
     Crawler.prototype.faveItems = function ($buttons, index, resolve) {
+        var that = this;
         if (index < $buttons.length) {
             $buttons[index].click();
             setTimeout(function () {
-                this.faveItems($buttons, index + 1);
+                that.faveItems($buttons, index + 1, resolve);
             }, 2000);
         }
         else {

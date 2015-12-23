@@ -1,7 +1,7 @@
 /// <reference path="../typings/lodash/lodash.d.ts"/>
 
 // using custom template delimiters
-// _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+_.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
 class Globals {
   //settings
@@ -9,6 +9,8 @@ class Globals {
   online = true; //actually do faving, liking, friending
   username = "Grangzor";
   startFromAnywhere = false;
+  //wait for fave buttons.done to initialize
+  delayAfterPageLoad: number = 3000;
 
   urlTemplate = {
     favorites: _.template("https://www.etsy.com/people/{{ username }}/favorites?ref=hdr"),

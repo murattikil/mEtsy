@@ -4,9 +4,11 @@ class Crawler {
   test: string;
   globals: Globals;
   helpers: Helpers;
+  that: Crawler;
   constructor() {
     this.globals = new Globals();
     this.helpers = new Helpers();
+    this.that = this;
   }
 
   start() {
@@ -31,15 +33,18 @@ class Crawler {
     }
   }
 
-  faveItemsForYou() {
+  private faveItemsForYou() {
+    var that: Crawler = this;
     var p = new Promise(function(resolve, reject) {
-      this.faveAllOnThisPage(resolve);
+      setTimeout(function() {
+        that.faveAllOnThisPage(resolve);
+      }, that.globals.delayAfterPageLoad);
     });
 
     p.then(function() {
-      var nextPage = this.getNextPage();
+      var nextPage = that.getNextPage();
       if (nextPage > 0) {
-        this.helpers.gotoUrl(this.globals.urlTemplate.itemsForYou({ username: this.helpers.getUserFromPageUrl(), page: nextPage }));
+        that.helpers.gotoUrl(that.globals.urlTemplate.itemsForYou({ username: that.helpers.getUserFromPageUrl(), page: nextPage }));
       }
     });
   }
@@ -55,15 +60,18 @@ class Crawler {
     var next = $("ul.pages li.active").next("li");
     if (next.length < 1) {
       console.log("CRAWLER: There are no more pages to go to.");
+      //TODO: Start another type of crawling.
       return 0;
     } else return parseInt(next.text());
   }
 
   faveAllOnThisPage(resolve) {
+    var that: Crawler = this;
     var $buttons = $("button.btn-fave").not(".done");
+    console.log("CRAWLER: Found ", $buttons.length, " not faved items on this page. Starting to fav them.");
     var p = new Promise(
       function(resolve, reject) {
-        this.faveItems($buttons, 0, resolve);
+        that.faveItems($buttons, 0, resolve);
       });
     p.then(function() {
       resolve();
@@ -71,10 +79,11 @@ class Crawler {
   }
 
   faveItems($buttons, index, resolve) {
+    var that: Crawler = this;
     if (index < $buttons.length) {
       $buttons[index].click();
       setTimeout(function() {
-        this.faveItems($buttons, index + 1);
+        that.faveItems($buttons, index + 1, resolve);
       }, 2000);
     }
     else {
