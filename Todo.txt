@@ -1,0 +1,17 @@
+1. Prevent the bot from faving more than 300 items per hour:
+ - Before each fave check the number of faves done during this hour.
+    - if the hour now is different than last saved hour, set the faves count to 1, and log the new Date
+ - After each successful fave increment the number of faves for this hour.
+ - In database keep info for faves count and the Date, favesTrack:
+   {
+    date: new Date(),
+    count: 10
+   }
+ -
+
+2. Write code that will switch between different modes (faving items, faving shops etc) depending on:
+ - We've hit the hourly item faves limit
+ - We've specified such behavior in extension's settings
+
+3. Implement functionality for faving shops
+4. Investigate about groups that do exchanging of faving shops and implement functionality that will visit such groups and fave member's shops

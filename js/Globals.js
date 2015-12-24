@@ -6,6 +6,7 @@ var Globals = (function () {
         this.username = "Grangzor";
         this.startFromAnywhere = false;
         this.delayAfterPageLoad = 3000;
+        this.maxFavesPerHour = 300;
         this.urlTemplate = {
             favorites: _.template("https://www.etsy.com/people/{{ username }}/favorites?ref=hdr"),
             itemsForYou: _.template("https://www.etsy.com/people/{{ username }}/favorites/items-for-you?page={{ page }}"),
@@ -21,4 +22,5 @@ var Globals = (function () {
     };
     return Globals;
 })();
+globals = new Globals();
 console.log("Loaded Globals");

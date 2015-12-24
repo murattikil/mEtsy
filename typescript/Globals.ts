@@ -9,8 +9,8 @@ class Globals {
   online = true; //actually do faving, liking, friending
   username = "Grangzor";
   startFromAnywhere = false;
-  //wait for fave buttons.done to initialize
-  delayAfterPageLoad: number = 3000;
+  delayAfterPageLoad: number = 3000; //wait for fave buttons.done to initialize after page load
+  maxFavesPerHour: number = 300;
 
   urlTemplate = {
     favorites: _.template("https://www.etsy.com/people/{{ username }}/favorites?ref=hdr"),
@@ -31,4 +31,8 @@ class Globals {
 
   }
 }
+
+declare var globals;
+globals = new Globals();
+
 console.log("Loaded Globals");

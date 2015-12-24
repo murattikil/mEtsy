@@ -1,5 +1,4 @@
 class Helpers {
-  globals = new Globals();
 
   gotoUrl(url: string) {
     window.location.href = url;

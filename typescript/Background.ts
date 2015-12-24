@@ -1,3 +1,5 @@
+declare var globals: any;
+
 class Background {
   db: Database;
   constructor() {
@@ -24,6 +26,7 @@ class Background {
   }
 
   private handleItemFave(payload: any, resolve: any): void {
-    this.db.saveFave(payload.user, resolve);
   }
+
+
 }

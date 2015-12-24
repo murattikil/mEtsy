@@ -19,7 +19,6 @@ var Background = (function () {
         p.then(sendResponse("success"));
     };
     Background.prototype.handleItemFave = function (payload, resolve) {
-        this.db.saveFave(payload.user, resolve);
     };
     return Background;
 })();

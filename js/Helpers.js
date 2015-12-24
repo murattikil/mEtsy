@@ -1,6 +1,5 @@
 var Helpers = (function () {
     function Helpers() {
-        this.globals = new Globals();
     }
     Helpers.prototype.gotoUrl = function (url) {
         window.location.href = url;
