@@ -1,8 +1,8 @@
 1. Prevent the bot from faving more than 300 items per hour:
- - Before each fave check the number of faves done during this hour.
-    - if the hour now is different than last saved hour, set the faves count to 1, and log the new Date
- - After each successful fave increment the number of faves for this hour.
- - In database keep info for faves count and the Date, favesTrack:
+ - Before each fave check the number of faves done during this hour. (done)
+    - if the hour now is different than last saved hour, set the faves count to 1, and log the new Date (done)
+ - After each successful fave increment the number of faves for this hour. (done)
+ - In database keep info for faves count and the Date, favesTrack: (done)
    {
     date: new Date(),
     count: 10
@@ -10,8 +10,40 @@
  -
 
 2. Write code that will switch between different modes (faving items, faving shops etc) depending on:
- - We've hit the hourly item faves limit
+ - We've hit the hourly item faves limit (done)
  - We've specified such behavior in extension's settings
+ - Log the time we faved the "items for you". Try not to loop through these items more than once a day. (done)
+
+  About the mode switcher:
+  -1) From time to time, switcher should check if we can fave more items. Let that be priority, meaning, stop other actions and do this.
+   0) [At later phase] Setting: check how many minutes are left in this hour. Set the delay between each fave to be shorter if not much time is left.
+   1) Check if "items for you" are faved today, if not fave them. Otherwise continue to 2)
+   2) Go to someone's "items i love" page and start faving
+   3) Whenever faves limit is hit, begin with favoring shops from groups that exchange favorites:
+    - go to a group and make a list of shops that can be favorited
+    - save the list in Background
+    - from background, command the extension to land on each shop's page and fave it
+    - after faving each shop, send signal to background that you are done, and background will send signal back with the next link
+    - if there is no next link, background should navigate the extension to another group
 
 3. Implement functionality for faving shops
 4. Investigate about groups that do exchanging of faving shops and implement functionality that will visit such groups and fave member's shops
+
+
+5. Regarding teams:
+ - How should the communication between extension and tab go?
+  1) Keep the 'working mode' for each tab stored in background.
+  2) According to the mode decide what should a loaded tab do:
+    1) mode is 'teams' and whereAreWe is teams, check if there exist a team object for the tab
+        - there is a team object, check if there is a stored reference of next { func, params }
+          - if there is such reference execute it
+          - if there is no such reference just call team.start()
+        - there is no team object, create it and start it
+      - when changing page, make sure to create the team.next object
+
+
+99. Code optimizations:
+ 1) Database should be singleton. Each class that uses Database should accept database reference in constructor. Same goes for Globals.
+
+100. When a new tab is opened ask the user if that tab should be covered used by the extension. If yes, remember that in background.
+You can even list all "etsy" tabs in popup, so user can manually enable/disable the extension on some of them.

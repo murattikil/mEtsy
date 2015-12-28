@@ -1,30 +1,37 @@
 /// <reference path="../typings/chrome/chrome.d.ts"/>
 
-class Content {
-  db: Database;
+class Content extends MessageHandler {
+  private messageHandler: MessageHandler;
   constructor() {
-    this.db = new Database();
-
-
-    this.init();
+    this.hookPageLoaded();
+    super();
   }
 
-  init() {
-    chrome.runtime.onMessage.addListener(this.msgHandler);
-  }
-
-  msgHandler(message: any, sender: chrome.runtime.MessageSender, sendResponse: () => any) {
-
-  }
-
-  sendMessage(type, payload) {
-    chrome.runtime.sendMessage({ type, payload }, function(response) {
-      console.log(response.farewell);
+  hookPageLoaded() {
+    $(document).ready(() => {
+      this.sendMessage(<IRuntimeMessage>{
+        type: IRuntimeMessageType.DocumentReady,
+        payload: {
+        }
+      })
     });
   }
+
+  continue(msg: IRuntimeMessage, sender: chrome.runtime.MessageSender) {
+    switch (msg.type) {
+      case IRuntimeMessageType.TeamFaver:
+        let teamFaver = new TeamFaver();
+        teamFaver.start();
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  public getType() : string{
+    return "Content";
+  }
 }
-
-console.log("Loaded Contents");
-
-var crawler: Crawler = new Crawler();
-crawler.start();
+console.log("[Content]: Content loaded");
+var content = new Content();

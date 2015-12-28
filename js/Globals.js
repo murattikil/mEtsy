@@ -1,26 +1,27 @@
-_.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 var Globals = (function () {
     function Globals() {
-        this.enableCrawler = true;
-        this.online = true;
-        this.username = "Grangzor";
-        this.startFromAnywhere = false;
-        this.delayAfterPageLoad = 3000;
-        this.maxFavesPerHour = 300;
-        this.urlTemplate = {
-            favorites: _.template("https://www.etsy.com/people/{{ username }}/favorites?ref=hdr"),
-            itemsForYou: _.template("https://www.etsy.com/people/{{ username }}/favorites/items-for-you?page={{ page }}"),
-            itemsILove: _.template("https://www.etsy.com/people/{{ username }}/favorites/items-i-love?page={{ page }}"),
-        };
-        this.url = {
-            itemsForYouUrl: this.urlTemplate.itemsForYou({ username: this.username, page: 1 }),
-            itemsILoveUrl: this.urlTemplate.itemsILove({ username: this.username, page: 1 }),
-        };
     }
-    Globals.prototype.demo = function () {
-        return 2;
+    Globals.delayBetweenFaves = function () {
+        return Utils.randomIntFromInterval(Globals.minDelayBetweenFaves, Globals.maxDelayBetweenFaves);
+    };
+    Globals.enableCrawler = true;
+    Globals.online = true;
+    Globals.username = "Grangzor";
+    Globals.startFromAnywhere = false;
+    Globals.delayAfterPageLoad = 3000;
+    Globals.maxFavesPerHour = 300;
+    Globals.minDelayBetweenFaves = 2300;
+    Globals.maxDelayBetweenFaves = 2700;
+    Globals.decideCrawlingModeInterval = 15000;
+    Globals.urlTemplate = {
+        favorites: "https://www.etsy.com/people/{{ username }}/favorites?ref=hdr",
+        itemsForYou: "https://www.etsy.com/people/{{ username }}/favorites/items-for-you?page={{ page }}",
+        itemsILove: "https://www.etsy.com/people/{{ username }}/favorites/items-i-love?page={{ page }}",
+    };
+    Globals.url = {
+        itemsForYouUrl: Mustache.render(Globals.urlTemplate.itemsForYou, { username: Globals.username, page: 1 }),
+        itemsILoveUrl: Mustache.render(Globals.urlTemplate.itemsILove, { username: Globals.username, page: 1 }),
     };
     return Globals;
 })();
-globals = new Globals();
-console.log("Loaded Globals");
+console.log("[Globals]: Loaded Globals");

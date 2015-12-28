@@ -1,38 +1,34 @@
 /// <reference path="../typings/lodash/lodash.d.ts"/>
+/// <reference path="../typings/mustache/mustache.d.ts"/>
 
 // using custom template delimiters
-_.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-
 class Globals {
-  //settings
-  enableCrawler = true;
-  online = true; //actually do faving, liking, friending
-  username = "Grangzor";
-  startFromAnywhere = false;
-  delayAfterPageLoad: number = 3000; //wait for fave buttons.done to initialize after page load
-  maxFavesPerHour: number = 300;
+  static enableCrawler = true;
+  static online = true; //actually do faving, liking, friending
+  static username = "Grangzor";
+  static startFromAnywhere = false;
+  static delayAfterPageLoad: number = 3000; //wait for fave buttons.done to initialize after page load
+  static maxFavesPerHour: number = 300;
+  static minDelayBetweenFaves: number = 2300;
+  static maxDelayBetweenFaves: number = 2700;
+  static decideCrawlingModeInterval = 15000;
 
-  urlTemplate = {
-    favorites: _.template("https://www.etsy.com/people/{{ username }}/favorites?ref=hdr"),
-    itemsForYou: _.template("https://www.etsy.com/people/{{ username }}/favorites/items-for-you?page={{ page }}"),
-    itemsILove: _.template("https://www.etsy.com/people/{{ username }}/favorites/items-i-love?page={{ page }}"),
+  static urlTemplate = {
+    favorites: "https://www.etsy.com/people/{{ username }}/favorites?ref=hdr",
+    itemsForYou: "https://www.etsy.com/people/{{ username }}/favorites/items-for-you?page={{ page }}",
+    itemsILove: "https://www.etsy.com/people/{{ username }}/favorites/items-i-love?page={{ page }}",
   };
 
-  url = {
-    itemsForYouUrl: this.urlTemplate.itemsForYou({ username: this.username, page: 1 }),
-    itemsILoveUrl: this.urlTemplate.itemsILove({ username: this.username, page: 1 }),
+  static url = {
+    itemsForYouUrl: Mustache.render(Globals.urlTemplate.itemsForYou, { username: Globals.username, page: 1 }),
+    itemsILoveUrl: Mustache.render(Globals.urlTemplate.itemsILove, { username: Globals.username, page: 1 }),
   };
 
   constructor() {
   }
 
-  demo() {
-    return 2;
-
+  static delayBetweenFaves() {
+    return Utils.randomIntFromInterval(Globals.minDelayBetweenFaves, Globals.maxDelayBetweenFaves);
   }
 }
-
-declare var globals;
-globals = new Globals();
-
-console.log("Loaded Globals");
+console.log("[Globals]: Loaded Globals");

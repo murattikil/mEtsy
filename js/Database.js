@@ -1,19 +1,18 @@
 var Database = (function () {
     function Database() {
-        this.storage = chrome.storage.local;
     }
-    Database.prototype.canFaveMoreItems = function () {
+    Database.canFaveMoreItems = function () {
+        var _this = this;
         var faveCount;
-        var that = this;
-        var p = new Promise(function (resolve, reject) {
-            that.getFavesTrack().then(function (favesTrack) {
+        return new Promise(function (resolve, reject) {
+            _this.getFavesTrack().then(function (favesTrack) {
                 favesTrack.count = favesTrack.count || 0;
                 var lastFaveMoment = favesTrack.dateOfLast;
                 var thisFaveMoment = new Date();
-                if (!that.areDatesInSameHour(lastFaveMoment, thisFaveMoment)) {
+                if (!_this.areDatesInSameHour(lastFaveMoment, thisFaveMoment)) {
                     resolve(true);
                 }
-                else if (favesTrack.count <= globals.maxFavesPerHour) {
+                else if (favesTrack.count <= Globals.maxFavesPerHour) {
                     resolve(true);
                 }
                 else {
@@ -21,40 +20,78 @@ var Database = (function () {
                 }
             });
         });
-        return p;
     };
-    Database.prototype.saveFave = function (date) {
-        var that = this;
+    Database.saveFave = function (date) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            this.getFavesTrack.then(function (favesTrack) {
+            _this.getFavesTrack().then(function (favesTrack) {
                 favesTrack.count = favesTrack.count || 0;
-                if (that.areDatesInSameHour(favesTrack.dateOfLast, date)) {
-                    favesTrack.count++;
+                if (_this.areDatesInSameHour(favesTrack.dateOfLast, date)) {
+                    favesTrack.count = favesTrack.count + 1;
                     favesTrack.dateOfLast = date;
                 }
                 else {
                     favesTrack.count = 1;
                     favesTrack.dateOfLast = date;
                 }
-                this.storage.set({ 'favesTrack': favesTrack }, function () {
-                    console.log("Fave count set to:", favesTrack.count);
+                _this.saveFavesTrack(favesTrack).then(function () {
                     resolve();
                 });
             });
         });
     };
-    Database.prototype.areDatesInSameHour = function (d1, d2) {
+    Database.canFaveItemsForYou = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this.canFaveMoreItems().then(function (result) {
+                if (!result) {
+                    resolve(false);
+                    return;
+                }
+                else {
+                    _this.storage.get("itemsForYou", function (itemsForYou) {
+                        if (itemsForYou.lastFaved) {
+                            var now = moment();
+                            var then = moment(itemsForYou.lastFaved);
+                            if (now.diff(then, "hours") >= 24) {
+                                console.log("[DATABASE]: Can't fave items for you because I already faved them less than 24 ago.");
+                                resolve(false);
+                            }
+                            else {
+                                resolve(true);
+                            }
+                        }
+                        else {
+                            resolve(true);
+                        }
+                    });
+                }
+            });
+        });
+    };
+    Database.areDatesInSameHour = function (d1, d2) {
         var m1 = moment(d1), m2 = moment(d2);
         return m1.isSame(m2, "hour");
     };
-    Database.prototype.getFavesTrack = function () {
-        var that = this;
-        var p = new Promise(function (resolve, reject) {
-            that.storage.get("favesTrack", function (favesTrack) {
+    Database.getFavesTrack = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this.storage.get("favesTrack", function (favesTrack) {
                 resolve(favesTrack);
+                return;
             });
         });
-        return p;
     };
+    Database.saveFavesTrack = function (favesTrack) {
+        var _this = this;
+        debugger;
+        return new Promise(function (resolve, reject) {
+            _this.storage.set({ "favesTrack": favesTrack }, function () {
+                console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);
+                resolve();
+            });
+        });
+    };
+    Database.storage = chrome.storage.local;
     return Database;
 })();

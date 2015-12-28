@@ -16,11 +16,24 @@
     "https://*.etsy.com/*",
     "storage"
   ],
-  "background": [{
-    "js": [
+  "background": {
+    "scripts": [
+      "/lib/jquery.js",
+      "/lib/moment.js",
+      "/lib/mustache.js",
+      "/lib/lodash.min.js",
+      "/js/Enums.js",
+      "/js/Interfaces.js",
+      "/js/DatabaseInterfaces.js",
+      "/js/Globals.js",
+      "/js/Utils.js",
+      "/js/Database.js",
+      "/js/ItemFaver.js",
+      "/js/TeamFaver.js",
+      "/js/MessageHandler.js",
       "/js/Background.js"
     ]
-  }],
+  },
   "content_scripts": [{
     "run_at": "document_idle",
     "matches": [
@@ -29,11 +42,17 @@
     "js": [
       "/lib/jquery.js",
       "/lib/moment.js",
+      "/lib/mustache.js",
       "/lib/lodash.min.js",
+      "/js/Enums.js",
+      "/js/Interfaces.js",
+      "/js/DatabaseInterfaces.js",
       "/js/Globals.js",
-      "/js/Helpers.js",
+      "/js/Utils.js",
       "/js/Database.js",
-      "/js/Crawler.js",
+      "/js/ItemFaver.js",
+      "/js/TeamFaver.js",
+      "/js/MessageHandler.js",
       "/js/Content.js"
     ]
   }]
