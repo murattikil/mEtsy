@@ -6,8 +6,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Content = (function (_super) {
     __extends(Content, _super);
     function Content() {
-        this.hookPageLoaded();
         _super.call(this);
+        this.showMenu();
     }
     Content.prototype.hookPageLoaded = function () {
         var _this = this;
@@ -16,6 +16,26 @@ var Content = (function (_super) {
                 type: IRuntimeMessageType.DocumentReady,
                 payload: {}
             });
+        });
+    };
+    Content.prototype.sendDocumentReady = function () {
+        this.sendMessage({
+            type: IRuntimeMessageType.DocumentReady,
+            payload: {}
+        });
+    };
+    Content.prototype.showMenu = function () {
+        var _this = this;
+        $.get(chrome.extension.getURL('/views/content.html'), function (data) {
+            $($.parseHTML(data)).appendTo('body');
+            _this.hookContentMenuEvents();
+        });
+    };
+    Content.prototype.hookContentMenuEvents = function () {
+        var _this = this;
+        var $cm = $(".content-menu");
+        $cm.find("#btn-start").click(function () {
+            _this.sendDocumentReady();
         });
     };
     Content.prototype.continue = function (msg, sender) {

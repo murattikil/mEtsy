@@ -109,17 +109,27 @@ class Database {
 
   private static getFavesTrack(): Promise<IFavesTrack> {
     return new Promise<IFavesTrack>((resolve, reject) => {
-      this.storage.get("favesTrack", (favesTrack: IFavesTrack) => {
-        resolve(favesTrack);
+      this.storage.get("favesTrack", (get: any) => {
+        // get.favesTrack = get.favesTrack || "{}";
+        if (get.favesTrack) {
+          get.favesTrack = JSON.parse(get.favesTrack);
+        }
+        else {
+          get.favesTrack = <IFavesTrack>{ dateOfLast: new Date(), count: 0 };
+        }
+
+        resolve(get.favesTrack);
         return;
       });
     });
   }
 
   private static saveFavesTrack(favesTrack: IFavesTrack): Promise<void> {
-    debugger;
+    let save = {};
+    save["favesTrack"] = JSON.stringify(favesTrack);
+
     return new Promise<void>((resolve, reject) => {
-      this.storage.set({ "favesTrack": favesTrack }, () => {
+      this.storage.set(save, () => {
         console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);
         resolve();
       });

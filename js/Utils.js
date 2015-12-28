@@ -28,5 +28,9 @@ var Utils = (function () {
     Utils.randomIntFromInterval = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     };
+    Utils.serializeDate = function () {
+    };
+    Utils.deserializeDate = function () {
+    };
     return Utils;
 })();

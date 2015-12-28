@@ -76,17 +76,24 @@ var Database = (function () {
     Database.getFavesTrack = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            _this.storage.get("favesTrack", function (favesTrack) {
-                resolve(favesTrack);
+            _this.storage.get("favesTrack", function (get) {
+                if (get.favesTrack) {
+                    get.favesTrack = JSON.parse(get.favesTrack);
+                }
+                else {
+                    get.favesTrack = { dateOfLast: new Date(), count: 0 };
+                }
+                resolve(get.favesTrack);
                 return;
             });
         });
     };
     Database.saveFavesTrack = function (favesTrack) {
         var _this = this;
-        debugger;
+        var save = {};
+        save["favesTrack"] = JSON.stringify(favesTrack);
         return new Promise(function (resolve, reject) {
-            _this.storage.set({ "favesTrack": favesTrack }, function () {
+            _this.storage.set(save, function () {
                 console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);
                 resolve();
             });

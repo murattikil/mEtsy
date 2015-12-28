@@ -54,6 +54,10 @@
       "/js/TeamFaver.js",
       "/js/MessageHandler.js",
       "/js/Content.js"
-    ]
-  }]
+    ],
+    "css": ["/views/style.css"]
+  }],
+   "web_accessible_resources": [
+     "/views/content.html"
+   ]
 }

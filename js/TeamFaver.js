@@ -10,16 +10,14 @@ var TeamFaver = (function () {
     TeamFaver.prototype.doFaving = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            _this.itemFaver.toggleFavesOnPage(false).then(function () {
-                _this.itemFaver.toggleFavesOnPage(true).then(function (result) {
-                    var allPassed = result.every(function (item) {
-                        return item;
-                    });
-                    console.log("[TeamFaver]: Faving page finished. All passed?", allPassed);
-                    if (allPassed && _this.goNextPage()) {
-                        console.log("[TeamFaver]: Going to the next page.");
-                    }
+            _this.itemFaver.toggleFavesOnPage(true).then(function (result) {
+                var allPassed = _this.itemFaver.successItems.every(function (item) {
+                    return item;
                 });
+                console.log("[TeamFaver]: Faving page finished. All passed?", allPassed);
+                if (allPassed && _this.goNextPage()) {
+                    console.log("[TeamFaver]: Going to the next page.");
+                }
             });
         });
     };

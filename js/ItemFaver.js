@@ -2,27 +2,38 @@ var ItemFaver = (function () {
     function ItemFaver($document, workingMode) {
         this.$document = $document;
         this.workingMode = workingMode;
+        this.successItems = [];
     }
     ItemFaver.prototype.toggleFavesOnPage = function (forceState) {
         var _this = this;
+        this.successItems.length = 0;
         var $buttons;
-        if (forceState == false) {
-            $buttons = this.getFavedButtons();
-        }
-        else {
+        if (forceState == true) {
             $buttons = this.getUnfavedButtons();
         }
+        else {
+            $buttons = this.getFavedButtons();
+        }
+        console.log("[ItemFaver]: Found", $buttons.length, "items to click on.");
         return $buttons.reduce(function (sequence, btn) {
             return sequence.then(function () {
                 return _this.toggleItemFave(btn, forceState);
             });
         }, Promise.resolve());
     };
-    ItemFaver.prototype.toggleItemFave = function ($button, isUnfave) {
-        debugger;
+    ItemFaver.prototype.toggleItemFave = function ($button, state) {
+        var _this = this;
+        if (state) {
+            state = true;
+        }
+        else {
+            state = false;
+        }
+        console.log("[ItemFaver]", moment().format("HH:mm:ss"), "Toggling item fave state to", state);
         return new Promise(function (resolve, reject) {
-            if (isUnfave) {
+            if (!state) {
                 $button.click();
+                _this.successItems.push(true);
                 resolve(true);
                 return;
             }
@@ -31,11 +42,13 @@ var ItemFaver = (function () {
                     setTimeout(function () {
                         $button.click();
                         Database.saveFave(new Date()).then(function () {
+                            _this.successItems.push(true);
                             resolve(true);
                         });
                     }, Globals.delayBetweenFaves());
                 }
                 else {
+                    _this.successItems.push(false);
                     resolve(false);
                 }
             });

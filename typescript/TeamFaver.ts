@@ -18,18 +18,18 @@ class TeamFaver {
 
   private doFaving(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.itemFaver.toggleFavesOnPage(false).then(() => {
-        this.itemFaver.toggleFavesOnPage(true).then((result) => {
-          let allPassed = result.every((item) => {
-            return item;
-          });
-          console.log("[TeamFaver]: Faving page finished. All passed?", allPassed);
-          if (allPassed && this.goNextPage()) {
-            console.log("[TeamFaver]: Going to the next page.");
-          }
+      //this.itemFaver.toggleFavesOnPage(false).then(() => {
+      this.itemFaver.toggleFavesOnPage(true).then((result) => {
+        let allPassed = this.itemFaver.successItems.every((item) => {
+          return item;
         });
+        console.log("[TeamFaver]: Faving page finished. All passed?", allPassed);
+        if (allPassed && this.goNextPage()) {
+          console.log("[TeamFaver]: Going to the next page.");
+        }
       });
     });
+    //});
   }
 
   private goNextPage(): boolean {

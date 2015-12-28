@@ -3,17 +3,40 @@
 class Content extends MessageHandler {
   private messageHandler: MessageHandler;
   constructor() {
-    this.hookPageLoaded();
+    // this.hookPageLoaded();
     super();
+    this.showMenu();
   }
 
-  hookPageLoaded() {
+  private hookPageLoaded() {
     $(document).ready(() => {
       this.sendMessage(<IRuntimeMessage>{
         type: IRuntimeMessageType.DocumentReady,
         payload: {
         }
       })
+    });
+  }
+
+  private sendDocumentReady(): void {
+    this.sendMessage(<IRuntimeMessage>{
+      type: IRuntimeMessageType.DocumentReady,
+      payload: {
+      }
+    });
+  }
+
+  private showMenu(): void {
+    $.get(chrome.extension.getURL('/views/content.html'), (data) => {
+      $($.parseHTML(data)).appendTo('body');
+      this.hookContentMenuEvents();
+    });
+  }
+
+  private hookContentMenuEvents(): void {
+    var $cm = $(".content-menu");
+    $cm.find("#btn-start").click(() => {
+      this.sendDocumentReady();
     });
   }
 
@@ -29,7 +52,7 @@ class Content extends MessageHandler {
     }
   }
 
-  public getType() : string{
+  public getType(): string {
     return "Content";
   }
 }
