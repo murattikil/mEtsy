@@ -2,7 +2,7 @@ class Background  extends MessageHandler {
   private db: Database;
   private mode: WorkingMode;
 
-  private teamFaver: TeamFaver;
+  private discussionFaver: FavathonDiscussionFaver; //todo make this interface
   tab: chrome.tabs.Tab;
 
   constructor() {
@@ -14,8 +14,8 @@ class Background  extends MessageHandler {
     console.trace();
     switch (this.mode) {
       case WorkingMode.TeamFaving:
-        // this.teamFaver = new TeamFaver();
-        // this.teamFaver.start();
+        // this.discussionFaver = new discussionFaver();
+        // this.discussionFaver.start();
         break;
 
       case WorkingMode.ItemsForYou:
@@ -39,17 +39,17 @@ class Background  extends MessageHandler {
     this.tab = sender.tab;
     switch (this.mode) {
       case WorkingMode.TeamFaving:
-        if (this.teamFaver) {
-          // this.teamFaver.start();
+        if (this.discussionFaver) {
+          // this.discussionFaver.start();
         }
         else {
-          this.teamFaver = new TeamFaver();
-          // this.teamFaver.start();
+          this.discussionFaver = new FavathonDiscussionFaver();
+          // this.discussionFaver.start();
         }
         let reply: IRuntimeMessage = {
-          type: IRuntimeMessageType.TeamFaver,
+          type: IRuntimeMessageType.discussionFaver,
           payload: {
-            teamFaver: this.teamFaver
+            discussionFaver: this.discussionFaver
           }
         };
         this.sendMessage(reply);

@@ -12,7 +12,7 @@ enum WorkingMode {
   TeamGathering
 }
 
-enum TeamType {
+enum ETeamDiscussonType {
   Favathon,
   Trendathon,
   Clickathon
@@ -22,4 +22,13 @@ enum IRuntimeMessageType {
   DocumentReady,
   GoToUrl,
   TeamFaver
+}
+
+enum ETeamType {
+
+}
+
+enum EFaveState {
+  Faved,
+  Unfaved
 }

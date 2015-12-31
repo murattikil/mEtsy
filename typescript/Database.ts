@@ -79,6 +79,19 @@ class Database {
     });
   }
 
+  static getFavesCountThisHour(): Promise<number> {
+    return this.getFavesTrack().then((favesTrack) => {
+      let then = moment(favesTrack.dateOfLast);
+      let now = moment();
+      if (then.isSame(now, "hour")) {
+        return favesTrack.count;
+      }
+      else {
+        return 0;
+      }
+    })
+  }
+
   // static setCrawlingMode(mode: WorkingMode): Promise<WorkingMode> {
   //   return new Promise<void>((resolve, reject) => {
   //     var workingMode: WorkingMode = {
@@ -110,14 +123,12 @@ class Database {
   private static getFavesTrack(): Promise<IFavesTrack> {
     return new Promise<IFavesTrack>((resolve, reject) => {
       this.storage.get("favesTrack", (get: any) => {
-        // get.favesTrack = get.favesTrack || "{}";
         if (get.favesTrack) {
           get.favesTrack = JSON.parse(get.favesTrack);
         }
         else {
           get.favesTrack = <IFavesTrack>{ dateOfLast: new Date(), count: 0 };
         }
-
         resolve(get.favesTrack);
         return;
       });
@@ -127,7 +138,6 @@ class Database {
   private static saveFavesTrack(favesTrack: IFavesTrack): Promise<void> {
     let save = {};
     save["favesTrack"] = JSON.stringify(favesTrack);
-
     return new Promise<void>((resolve, reject) => {
       this.storage.set(save, () => {
         console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);

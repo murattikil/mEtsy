@@ -14,7 +14,7 @@ class Utils {
     return user;
   }
 
-  static whereAreWe(url? : string) {
+  static whereAreWe(url?: string) {
     url = url || window.location.href;
     if (url.indexOf("/favorites/items-for-you") > 0) {
       return "items-for-you";
@@ -38,13 +38,10 @@ class Utils {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  static serializeDate(){
-
+  static newId(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      var r = crypto.getRandomValues(new Uint8Array(1))[0] % 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
-
-  static deserializeDate(){
-
-  }
-
-
 }

@@ -1,13 +1,23 @@
 .content-menu {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px 2px #aaaaaa;
   z-index: 9999;
-  position: absolute;
+  position: fixed;
   right: 0;
-  top: 100px;
+  top: 20%;
   height: 200px;
   width: 150px;
   padding: 20px 10px;
-  text-align: center;
   background: #fdfdaa;
   opacity: 0.8;
+}
+.content-menu .body {
+  height: 90%;
+}
+.content-menu .footer {
+  text-align: center;
+  height: 10%;
+}
+.content-menu #btn-start {
+  padding: 5px 10px;
 }
