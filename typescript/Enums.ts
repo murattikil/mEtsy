@@ -32,3 +32,8 @@ enum EFaveState {
   Faved,
   Unfaved
 }
+
+enum EDiscussionDoneStatus {
+  DoneForever,
+  DoneForNow
+}

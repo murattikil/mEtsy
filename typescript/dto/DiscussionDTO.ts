@@ -4,10 +4,11 @@ class DiscussionDTO {
   isDone: boolean;
   page: number;
   lastPost: IPost;
+  wePosted: boolean;
   dateStarted: moment.Moment;
   dateModified: moment.Moment;
 
-  constructor(id: string, url: string, isDone: boolean, page: number, lastPost: IPost, dateStarted: moment.Moment, dateModified: moment.Moment) {
+  constructor(id: string, url: string, isDone: boolean, page: number, lastPost: IPost, wePosted: boolean, dateStarted: moment.Moment, dateModified: moment.Moment) {
     this.url = url;
     this.isDone = isDone;
     this.page = page;

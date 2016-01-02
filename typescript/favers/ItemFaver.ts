@@ -3,7 +3,7 @@
 class ItemFaver {
   successItems: boolean[];
 
-  constructor(private workingMode: WorkingMode) {
+  constructor() {
     this.successItems = [];
   }
 

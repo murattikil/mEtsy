@@ -5,32 +5,38 @@ class FavathonDiscussionFaver extends BaseDiscussionFaver {
   //setting: the rule of Favathon is to unfave any item that we have faved in the past, then refave it.
   private unfaveBeforeFave: boolean = true;
 
+  private repo = new Repo();
+
   constructor(protected team: TeamDTO, protected discussion: DiscussionDTO) {
     super(team, discussion);
+    this.itemFaver = new ItemFaver();
 
     this.navigateToLastPost();
+  }
+
+  favePage(): Promise<EDiscussionDoneStatus> {
     this.$containers = this.getUndonePosts();
 
     if (this.unfaveBeforeFave) {
-      this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Faved), false).then((allOk) => {
-        this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Unfaved), true).then((allOk) => {
-          if (!allOk) {
-            this.done(false);
-          }
-          else if (!this.goNextPage()) {
-            this.done(true);
-          }
-        })
-      });
+      return this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Faved), false).then(this.faveUnfaved);
     }
-
-    this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Unfaved), true);
-
-
+    else {
+      return this.faveUnfaved();
+    }
   }
 
-  favePage() {
-
+  private faveUnfaved(): Promise<EDiscussionDoneStatus> {
+    return this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Unfaved), true).then((allOk) => {
+      if (!allOk) {
+        return this.done(false);
+      }
+      else if (!this.goNextPage()) {
+        return this.done(true);
+      }
+      else {
+        return this.done(false);
+      }
+    });
   }
 
   private getFaveButtons(state: EFaveState) {
@@ -57,7 +63,23 @@ class FavathonDiscussionFaver extends BaseDiscussionFaver {
     return $buttons;
   }
 
-  private unfaveOnPage() {
+  submitMyPost() {
+    let $textbox = $("#new-post-form").find("textarea");
+    let $submit = $("#new-post-form").find("input[type='submit']");
+
+    if ($textbox.length > 1) {
+      let content = "";
+      this.repo.listings.getRandom(3).then((items: ListingDTO[]) => {
+        _.each(items, (item: ListingDTO) => {
+          content += item.url + "\n\n";
+        });
+        $textbox.val(content);
+        if (confirm("Should I submit my post now?")) {
+          $submit.click();
+        }
+        //todo: page will refresh? if it doesn't wrap this ode in a promise and return success.
+      });
+    }
 
   }
 }

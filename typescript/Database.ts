@@ -92,29 +92,6 @@ class Database {
     })
   }
 
-  // static setCrawlingMode(mode: WorkingMode): Promise<WorkingMode> {
-  //   return new Promise<void>((resolve, reject) => {
-  //     var workingMode: WorkingMode = {
-  //       lastSet: new Date,
-  //       mode: mode
-  //     };
-  //     this.storage.set({ 'crawlingMode': crawlingMode }, () => {
-  //       console.log("[DATABASE]: Crawling mode set to:", crawlingMode.mode);
-  //       resolve();
-  //     });
-  //   });
-  // }
-
-  // static getCrawlingMode(): Promise<CrawlingMode> {
-  //   return new Promise<CrawlingMode>((resolve, reject) => {
-  //     this.storage.get("crawlingMode", (crawlingMode) => {
-  //       console.log("[DATABASE]: Retrieved crawling mode:", crawlingMode);
-  //       resolve();
-  //       return;
-  //     });
-  //   });
-  // }
-
   private static areDatesInSameHour(d1: Date, d2: Date): boolean {
     var m1 = moment(d1), m2 = moment(d2);
     return m1.isSame(m2, "hour");
@@ -142,6 +119,14 @@ class Database {
       this.storage.set(save, () => {
         console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);
         resolve();
+      });
+    });
+  }
+
+  static getConfigDTO(): Promise<ConfigDTO> {
+    return new Promise<ConfigDTO>((resolve, reject) => {
+      this.storage.get({ config: ConfigDTO.default() }, (result) => {
+        resolve(result["config"] as ConfigDTO);
       });
     });
   }

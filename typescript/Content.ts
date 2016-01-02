@@ -57,8 +57,8 @@ class Content extends MessageHandler {
   continue(msg: IRuntimeMessage, sender: chrome.runtime.MessageSender) {
     switch (msg.type) {
       case IRuntimeMessageType.TeamFaver:
-        let teamFaver = new TeamFaver();
-        teamFaver.start();
+        // let teamFaver = new TeamFaver();
+        // teamFaver.start();
         break;
 
       default:

@@ -23,17 +23,7 @@
       "/lib/moment.js",
       "/lib/mustache.js",
       "/lib/lodash.min.js",
-      "lib/purl.js",
-      "/js/Enums.js",
-      "/js/Interfaces.js",
-      "/js/DatabaseInterfaces.js",
-      "/js/Globals.js",
-      "/js/Utils.js",
-      "/js/Database.js",
-      "/js/ItemFaver.js",
-      "/js/TeamFaver.js",
-      "/js/MessageHandler.js",
-      "/js/Background.js"
+      "lib/purl.js"
     ]
   },
   "content_scripts": [{
@@ -46,17 +36,7 @@
       "/lib/moment.js",
       "/lib/mustache.js",
       "/lib/lodash.min.js",
-      "lib/purl.js",
-      "/js/Enums.js",
-      "/js/Interfaces.js",
-      "/js/DatabaseInterfaces.js",
-      "/js/Globals.js",
-      "/js/Utils.js",
-      "/js/Database.js",
-      "/js/ItemFaver.js",
-      "/js/TeamFaver.js",
-      "/js/MessageHandler.js",
-      "/js/Content.js"
+      "lib/purl.js"
     ],
     "css": ["/views/style.css"]
   }],

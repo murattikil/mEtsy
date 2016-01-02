@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/purl/purl-jquery.d.ts"/>
-
 class BaseDiscussionFaver {
   constructor(protected team: TeamDTO, protected discussion: DiscussionDTO) {
 
@@ -13,9 +11,19 @@ class BaseDiscussionFaver {
   }
 
   protected navigateToLastPost() {
-    if (window.location.href != this.discussion.lastPost.url) {
-      window.location.href = this.discussion.lastPost.url;
+    let url = "";
+    if (this.discussion.lastPost && this.discussion.lastPost.url) {
+      url = this.discussion.lastPost.url;
     }
+    else {
+      url = this.discussion.url;
+    }
+
+    if (window.location.href != url) {
+      Utils.gotoUrl(url);
+    }
+
+    //todo: What if the post does not exist? What url we get in window.location? The extension will cycle indefinitely then.
   }
 
   protected updateLastPostBookmark() {
@@ -62,13 +70,16 @@ class BaseDiscussionFaver {
     }
   }
 
-  protected done(hitEndOfPages: boolean) {
+  protected done(hitEndOfPages: boolean): EDiscussionDoneStatus {
     let now = moment();
-    if (hitEndOfPages && now.hour() >= 23) {
-      this.fireDoneForever();
+    if (hitEndOfPages && !this.discussion.dateStarted.isSame(moment(), "day")) {
+      return EDiscussionDoneStatus.DoneForever;
     }
+    // else if (hitEndOfPages && now.hour() >= 23) {
+    //   return EDiscussionDoneStatus.DoneForever;
+    // }
     else {
-      this.fireDoneForNow();
+      return EDiscussionDoneStatus.DoneForNow;
     }
   }
 
