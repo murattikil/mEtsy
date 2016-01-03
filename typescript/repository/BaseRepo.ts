@@ -6,7 +6,7 @@ class BaseRepo<T> {
 
   }
 
-  protected getAll(): Promise<T[]> {
+  getAll(): Promise<T[]> {
     return new Promise<T[]>((resolve, reject) => {
 
       let dflt = {};
@@ -19,7 +19,7 @@ class BaseRepo<T> {
     });
   }
 
-  protected getById(id: string): Promise<T> {
+  getById(id: string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       return this.getAll().then((all) => {
         return all[id];
@@ -27,7 +27,7 @@ class BaseRepo<T> {
     });
   }
 
-  protected saveAll(collection: T[]): Promise<void> {
+  saveAll(collection: T[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let save = {};
       save[this.collectionName] = collection;
@@ -41,13 +41,13 @@ class BaseRepo<T> {
     });
   }
 
-  protected saveById(id: string, dto: T): Promise<void> {
+  saveById(id: string, dto: T): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.getAll().then((all) => {
         dto["id"] = id;
         all[id] = dto;
         return this.saveAll(all);
-      })
+      });
     });
   }
 }

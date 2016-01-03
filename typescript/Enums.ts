@@ -18,10 +18,11 @@ enum ETeamDiscussonType {
   Clickathon
 }
 
-enum IRuntimeMessageType {
+enum EMessageType {
   DocumentReady,
   GoToUrl,
-  TeamFaver
+  TeamFaver,
+  DiscussionDone
 }
 
 enum ETeamType {
@@ -33,7 +34,17 @@ enum EFaveState {
   Unfaved
 }
 
-enum EDiscussionDoneStatus {
+enum EDiscussionStatus {
   DoneForever,
-  DoneForNow
+  DoneForNow,
+  NotStarted
+}
+
+//message types
+enum EBackgroundMsgType{
+  ContinueFavathon
+}
+
+enum EContentMsgType{
+  Task
 }

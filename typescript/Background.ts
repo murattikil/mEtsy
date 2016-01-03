@@ -1,6 +1,7 @@
-class Background  extends MessageHandler {
-  private db: Database;
-  private mode: WorkingMode;
+class Background extends MessageHandler {
+
+  tasks: ITask<any>[];
+  task: ITask<any>;
 
   private discussionFaver: FavathonDiscussionFaver; //todo make this interface
   tab: chrome.tabs.Tab;
@@ -12,104 +13,78 @@ class Background  extends MessageHandler {
   public start() {
     console.log("[Background]: Starting.");
     console.trace();
-    switch (this.mode) {
-      case WorkingMode.TeamFaving:
-        // this.discussionFaver = new discussionFaver();
-        // this.discussionFaver.start();
-        break;
 
-      case WorkingMode.ItemsForYou:
-        //todo;
-        break;
-
-      case WorkingMode.ItemsILove:
-        //todo;
-        break;
-
-      default:
-        this.decideWorkingMode().then((workingMode) => {
-          this.mode = workingMode;
-          this.start();
-        })
-        break;
-    }
+    //todo: retrieve saved tasks from db
+    //start the periodical task number checker
+    //if tasks.length == 0, add the task for gathering discussions
+    //when done this task should fill up this.tasks array
   }
 
-  public continue(msg: IRuntimeMessage, sender: chrome.runtime.MessageSender) {
+  public receive(msg: IMsg, sender: chrome.runtime.MessageSender) {
     this.tab = sender.tab;
-    switch (this.mode) {
-      case WorkingMode.TeamFaving:
-        if (this.discussionFaver) {
-          // this.discussionFaver.start();
+    var prefix = msg.type.substring(0, msg.type.indexOf("."));
+
+    switch (prefix) {
+      case "task":
+        this.continueTask(msg.payload.taskId);
+        break;
+      case "other":
+        break;
+    }
+
+  }
+
+  private continueTask(taskId: string) {
+    this.task = _.find(this.tasks, (t) => {
+      return t.id == taskId;
+    });
+    if (this.task) {
+      this.task.continue().then((res) => {
+        if (res == false) {
+          this.removeTask(this.task.id);
+          this.startNextTask();
         }
         else {
-          this.discussionFaver = new FavathonDiscussionFaver();
-          // this.discussionFaver.start();
+          //nothing, tasks has sent message to content
         }
-        let reply: IRuntimeMessage = {
-          type: IRuntimeMessageType.discussionFaver,
-          payload: {
-            discussionFaver: this.discussionFaver
-          }
-        };
-        this.sendMessage(reply);
-        break;
-
-      case WorkingMode.TeamGathering:
-        //todo
-        break;
-
-      case WorkingMode.ItemsForYou:
-        //todo
-        break;
-
-      case WorkingMode.ItemsILove:
-        //todo
-        break;
-
-      default:
-        this.decideWorkingMode().then((workingMode) => {
-          this.mode = workingMode;
-          this.start();
-        });
-        break;
+      });
+    }
+    else {
+      //tell content to start new task
     }
   }
 
-  // private setWorkingMode(mode: CrawlingMode) {
-  //   Database.setCrawlingMode(mode).then<WorkingMode>(() => {
-  //     //don't have to do anything
-  //   });
-  // }
-
-  public decideWorkingMode(): Promise<WorkingMode> {
-    return new Promise<WorkingMode>((resolve, reject) => {
-      Database.canFaveMoreItems().then((result) => {
-        //todo: Add more constraints when we can be in teams mode
-        if (result) {
-          resolve(WorkingMode.TeamFaving);
-          return;
-        }
-      });
-      Database.canFaveItemsForYou().then((result) => {
-        if (result) {
-          resolve(WorkingMode.ItemsForYou)
-          return;
-        }
-      });
-      Database.canFaveMoreItems().then((result) => {
-        if (result) {
-          resolve(WorkingMode.ItemsILove)
-          return;
-        }
-      });
+  removeTask(taskId: string) {
+    this.tasks = _.filter(this.tasks, (t) => {
+      return t.id != taskId;
     });
   }
 
-  public getType() : string{
-    return "Background";
+  addTask(task: ITask<any>) {
+
+  }
+
+  startNextTask() {
+    this.continueTask(this.tasks[0].id);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 console.log("[Background]: Background loaded");
 var bg = new Background();

@@ -1,19 +1,19 @@
 class DiscussionDTO {
   id: string
   url: string;
-  isDone: boolean;
+  status: EDiscussionDoneStatus;
   page: number;
   lastPost: IPost;
-  wePosted: boolean;
+  wePosted: number;
   dateStarted: moment.Moment;
-  dateModified: moment.Moment;
+  dateOfLastAction: moment.Moment;
 
-  constructor(id: string, url: string, isDone: boolean, page: number, lastPost: IPost, wePosted: boolean, dateStarted: moment.Moment, dateModified: moment.Moment) {
+  constructor(id: string, url: string, status: EDiscussionDoneStatus, page: number, lastPost: IPost, wePosted: number, dateStarted: moment.Moment, dateOfLastAction: moment.Moment) {
     this.url = url;
-    this.isDone = isDone;
+    this.status = status;
     this.page = page;
     this.lastPost = lastPost;
     this.dateStarted = dateStarted;
-    this.dateModified = dateModified;
+    this.dateOfLastAction = dateOfLastAction;
   }
 }

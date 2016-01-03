@@ -1,5 +1,11 @@
-interface IRuntimeMessage {
-  type: IRuntimeMessageType;
+//messsages
+interface IBackgroundMsg {
+  type: EMessageType;
+  payload: any
+}
+
+interface IContentMsg {
+  type: EMessageType;
   payload: any
 }
 
@@ -30,3 +36,5 @@ interface IPost {
   id: string,
   url: string
 }
+
+//payloads:
