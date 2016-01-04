@@ -88,3 +88,4 @@ class Background extends MessageHandler {
 
 console.log("[Background]: Background loaded");
 var bg = new Background();
+var Env = "background";

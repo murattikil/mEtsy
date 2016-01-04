@@ -34,12 +34,6 @@ enum EFaveState {
   Unfaved
 }
 
-enum EDiscussionStatus {
-  DoneForever,
-  DoneForNow,
-  NotStarted
-}
-
 //message types
 enum EBackgroundMsgType{
   ContinueFavathon

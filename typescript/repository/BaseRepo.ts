@@ -50,4 +50,13 @@ class BaseRepo<T> {
       });
     });
   }
+
+  removeById(id: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.getAll().then((all) => {
+        delete all[id];
+        return this.saveAll(all);
+      });
+    });
+  }
 }

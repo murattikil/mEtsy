@@ -1,6 +1,34 @@
 class BaseDiscussionFaver {
-  constructor(protected team: TeamDTO, protected discussion: DiscussionDTO) {
+  constructor(protected discussion: DiscussionDTO) {
 
+  }
+
+  isLastPage(): boolean {
+    return !this.goNextPage(true);
+  }
+
+  goNextPage(onlyTest?: boolean): boolean {
+    //onlyTest return false if there are no more pages to go to, otherwise true, but won't change the page
+    var $current = $(".pager .pages a.current-page");
+    let $next = $current.parent().next().find("a");
+
+    if ($next.length > 0) {
+      if (!onlyTest) {
+        window.location.href = $next.attr("href");
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  getDiscussionCreationMoment() : moment.Moment {
+    let text = $(".first-post .foot.last a").first().text();
+
+    //return moment(text, "HH:mm a MMM D, YYYY Z");
+
+    return moment(text);
   }
 
   protected navigateToThisDiscussion() {
@@ -55,41 +83,5 @@ class BaseDiscussionFaver {
 
     debugger
     return $undone;
-  }
-
-  protected goNextPage(): boolean {
-    var $current = $(".pager .pages a.current-page");
-    let $next = $current.parent().next().find("a");
-
-    if ($next.length > 0) {
-      window.location.href = $next.attr("href");
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
-  protected done(hitEndOfPages: boolean): EDiscussionDoneStatus {
-    let now = moment();
-    if (hitEndOfPages && !this.discussion.dateStarted.isSame(moment(), "day")) {
-      return EDiscussionDoneStatus.DoneForever;
-    }
-    // else if (hitEndOfPages && now.hour() >= 23) {
-    //   return EDiscussionDoneStatus.DoneForever;
-    // }
-    else {
-      return EDiscussionDoneStatus.DoneForNow;
-    }
-  }
-
-  protected fireDoneForever() {
-    //this should fire event or inform background
-    //todo
-  }
-
-  protected fireDoneForNow() {
-    //this should fire event or inform background
-    //todo
   }
 }

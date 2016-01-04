@@ -5,9 +5,3 @@ interface ITask<T> {
   dto: T,
   type: string
 }
-
-enum ETaskStatus {
-  InProgress,
-  DoneForNow,
-  DoneForever
-}
