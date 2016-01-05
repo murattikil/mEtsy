@@ -1,10 +1,10 @@
-class Content extends MessageHandler {
-  private messageHandler: MessageHandler;
-  private task: ITask<any>;
+class Content {
+  private task: Task;
+
   private repo = new Repo();
+  private sideDialog = new SideDialog();
 
   constructor() {
-    super();
     this.hookPageLoaded();
   }
 
@@ -12,15 +12,20 @@ class Content extends MessageHandler {
     $(document).ready(() => {
       let msg = <IMsg> { type: "event.documentReady" };
       chrome.runtime.sendMessage(msg);
+
+      this.continue();
     });
   }
 
   continue() {
+    // If you always get the first task, and it can not be removed, then you will get the same task over and over again, until it happens to be able to be removed.
+    // todo: get eligible task, and if there are no eligible tasks at the moment, then insert new tasks.
     this.repo.tasks.getFirst().then((taskDto) => {
       if (taskDto) {
         switch (taskDto.type) {
           case ETaskType.Favathon:
             this.task = new Task(taskDto);
+            this.task.continue();
 
             break;
 
@@ -29,21 +34,11 @@ class Content extends MessageHandler {
         }
       }
       else {
+        console.log("[Content]: There are no tasks.");
         //there aren't any tasks
         //todo: HERE COMES THE TASK MAKING TASK!
       }
     });
-  }
-
-  private continueTask(task: ITask<any>) {
-    this.task = task;
-    if (this.task) {
-      this.task.continue().then((res) => {
-      });
-    }
-    else {
-      //tell content to start new task
-    }
   }
 
   public getType(): string {

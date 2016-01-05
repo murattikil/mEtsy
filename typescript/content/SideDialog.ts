@@ -1,5 +1,7 @@
 class SideDialog {
 
+  repo = new Repo();
+
   constructor() {
     this.showMenu();
   }
@@ -8,7 +10,7 @@ class SideDialog {
     $.get(chrome.extension.getURL('/views/content.html'), (data) => {
       $($.parseHTML(data)).appendTo('body');
       this.hookContentMenuEvents();
-      Database.getFavesCountThisHour().then((count) => {
+      this.repo.faves.getFavesCountThisHour().then((count) => {
         $("#lblFavesThisHour").text(Mustache.render("Faves this hour {{ count }}/{{ max }}", { count: count, max: Globals.maxFavesPerHour }));
       });
     });
@@ -18,6 +20,11 @@ class SideDialog {
     var $cm = $(".content-menu");
     $cm.find("#btn-start").click(() => {
       this.sendStart();
+    });
+    $cm.find("#btn-insert-test-task").click(() => {
+      this.repo.tasks.insertTest().then(() => {
+        $cm.find("#msg").text(Utils.timestamp() + " Inserted test task");
+      })
     });
     this.hookFavesTrackChanged();
   }

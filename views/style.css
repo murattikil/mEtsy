@@ -11,13 +11,15 @@
   background: #fdfdaa;
   opacity: 0.8;
 }
-.content-menu .body {
-  height: 90%;
-}
 .content-menu .footer {
   text-align: center;
-  height: 10%;
 }
-.content-menu #btn-start {
+.content-menu button {
   padding: 5px 10px;
+  margin-top: 2px;
+}
+.content-menu #msg {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 2px 5px;
 }

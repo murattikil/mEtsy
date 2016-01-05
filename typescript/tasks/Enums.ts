@@ -4,6 +4,7 @@ enum ETaskType {
 }
 
 enum ETaskStatus {
+  NotStarted,
   InProgress,
   DoneForNow,
   DoneForever

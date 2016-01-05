@@ -44,4 +44,8 @@ class Utils {
       return v.toString(16);
     });
   }
+
+  static timestamp(): string {
+    return moment().format("HH:mm:ss");
+  }
 }

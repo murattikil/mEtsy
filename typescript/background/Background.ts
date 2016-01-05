@@ -1,4 +1,4 @@
-class Background extends MessageHandler {
+class Background {
 
   tasks: ITask<any>[];
   task: ITask<any>;
@@ -7,7 +7,6 @@ class Background extends MessageHandler {
   tab: chrome.tabs.Tab;
 
   constructor() {
-    super();
   }
 
   public start() {
@@ -68,23 +67,6 @@ class Background extends MessageHandler {
     this.continueTask(this.tasks[0].id);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 console.log("[Background]: Background loaded");
 var bg = new Background();
