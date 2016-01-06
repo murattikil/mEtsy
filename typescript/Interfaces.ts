@@ -32,9 +32,4 @@ interface IShopItem {
 
 }
 
-interface IPost {
-  id: string,
-  url: string
-}
-
 //payloads:

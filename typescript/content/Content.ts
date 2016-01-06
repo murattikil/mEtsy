@@ -13,7 +13,7 @@ class Content {
       let msg = <IMsg> { type: "event.documentReady" };
       chrome.runtime.sendMessage(msg);
 
-      this.continue();
+      // this.continue();
     });
   }
 

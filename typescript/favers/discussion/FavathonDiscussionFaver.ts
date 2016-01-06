@@ -1,6 +1,5 @@
 class FavathonDiscussionFaver extends BaseDiscussionFaver {
   private itemFaver: ItemFaver;
-  private $containers: JQuery[];
 
   //inherited
   //protected discussion: DiscussionDTO;
@@ -8,70 +7,66 @@ class FavathonDiscussionFaver extends BaseDiscussionFaver {
   //setting: the rule of Favathon is to unfave any item that we have faved in the past, then refave it.
   private unfaveBeforeFave: boolean = true;
 
-  private repo = new Repo();
-
-  constructor(protected discussion: DiscussionDTO) {
-    super(discussion);
+  constructor(protected taskDto: TaskDTO) {
+    super(taskDto);
     this.itemFaver = new ItemFaver();
 
     this.navigateToLastPost();
   }
 
-  do(): Promise<void> {
-    return this.favePage().then((status) => {
-
-    });
+  do(): Promise<boolean> {
+    return this.favePage();
   }
 
-  favePage(): Promise<boolean> {
-    this.$containers = this.getUndonePosts();
+  private favePage(): Promise<boolean> {
+    let $undonePosts = this.getUndonePosts();
 
     if (this.unfaveBeforeFave) {
-      return this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Faved), false).then(() => {
-        return this.faveUnfaved();
+      return this.togglePosts($undonePosts, EFaveState.Unfaved).then(() => {
+        return this.togglePosts($undonePosts, EFaveState.Faved);
       });
     }
     else {
-      return this.faveUnfaved();
+      return this.togglePosts($undonePosts, EFaveState.Faved);
     }
   }
 
-  private faveUnfaved(): Promise<boolean> {
-    return this.itemFaver.toggleButtons(this.getFaveButtons(EFaveState.Unfaved), true).then((allOk) => {
-      if (!allOk) {
-        return false;
-      }
-      else if (!this.goNextPage()) {
-        return true;
+  private togglePosts($posts: JQuery[], toState: EFaveState): Promise<boolean> {
+    console.trace();
+    debugger;
+    return $posts.reduce((sequence, post) => {
+      // Add these actions to the end of the sequence
+      return sequence.then((res) => {
+        if (res) {
+          return this.togglePost($(post), toState);
+        }
+        else {
+          return;
+        }
+      });
+    }, Promise.resolve(true));
+  }
+
+  private togglePost($post: JQuery, toState: EFaveState): Promise<boolean> {
+    let state: EFaveState;
+    state = toState == EFaveState.Unfaved ? EFaveState.Faved : EFaveState.Unfaved;
+
+    let $buttons = this.getButtonsFromPost($post, state);
+    return this.itemFaver.toggleButtons($buttons, toState == EFaveState.Faved).then((successfullyFavedAllButtons) => {
+      if (successfullyFavedAllButtons) {
+        //we were able to fave all the buttons in this post.
+        //we save the post, and we return true, so upper cycle will know to coninue to next post
+        return this.saveLastPostToDb($post).then(() => {
+          return true;
+        });
       }
       else {
+        //we were not able to fave all the buttons in this post.
+        //the post will not be saved, and we return false to break the cycle
+        //(no worries, we will restart it later from last saved post)
         return false;
       }
     });
-  }
-
-  private getFaveButtons(state: EFaveState) {
-    let $buttons: JQuery[] = [];
-    if (state == EFaveState.Unfaved) {
-      _.each(this.$containers, function($container: JQuery) {
-        let few: JQuery[] = [];
-        if (state == EFaveState.Unfaved) {
-          few = $container.find(".button-fave.unfavorited-button").not(".favorited-button").get();
-        }
-        else if (state == EFaveState.Faved) {
-          few = $container.find(".button-fave.favorited-button").get();
-        }
-        $buttons.concat(few);
-      });
-    }
-    else if (state == EFaveState.Faved) {
-      _.each(this.$containers, function($container: JQuery) {
-        let few = $container.find(".button-fave.favorited-button").get();
-        $buttons.concat(few);
-      });
-    }
-
-    return $buttons;
   }
 
   public submitMyPost() {

@@ -17,7 +17,7 @@ class ItemFaver {
           return this.toggleItemFave(btn, saveEachFave);
         }
         else {
-          return;
+          return false;
         }
       });
     }, Promise.resolve(true));
@@ -29,22 +29,19 @@ class ItemFaver {
     return new Promise<boolean>((resolve, reject) => {
       if (!save) {
         $button.click();
-        this.successItems.push(true);
         resolve(true);
         return;
       }
-      Database.canFaveMoreItems().then((result) => {
-        if (result == true) {
+      Database.canFaveMoreItems().then((canFaveMore) => {
+        if (canFaveMore) {
           setTimeout(() => {
             $button.click();
             Database.saveFave(new Date()).then(() => {
-              this.successItems.push(true);
               resolve(true);
             });
           }, Globals.delayBetweenFaves())
         }
         else {
-          this.successItems.push(false);
           resolve(false);
         }
       });

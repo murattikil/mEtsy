@@ -1,6 +1,11 @@
 class BaseDiscussionFaver {
-  constructor(protected discussion: DiscussionDTO) {
+  discussion: DiscussionDTO;
+  task: TaskDTO;
+  repo = new Repo();
 
+  constructor(taskDto: TaskDTO) {
+    this.task = taskDto;
+    this.discussion = this.task.discussion;
   }
 
   isLastPage(): boolean {
@@ -23,7 +28,7 @@ class BaseDiscussionFaver {
     }
   }
 
-  getDiscussionCreationMoment() : moment.Moment {
+  getDiscussionCreationMoment(): moment.Moment {
     let text = $(".first-post .foot.last a").first().text();
 
     //return moment(text, "HH:mm a MMM D, YYYY Z");
@@ -54,34 +59,51 @@ class BaseDiscussionFaver {
     //todo: What if the post does not exist? What url we get in window.location? The extension will cycle indefinitely then.
   }
 
-  protected updateLastPostBookmark() {
-    let $post = $(".forum-post").last();
+  protected saveLastPostToDb($post: JQuery): Promise<void> {
     let $a = $post.find(".foot a");
-    let url = $a.url();
+    let purl = $a.url();
 
-    let lastPost: IPost = {
-      id: url.param("post_id"),
-      url: url.attr("source")
-    };
+    let postId = purl.param("post_id");
+    let postUrl = purl.attr("source");
 
-    //fix post url to be absolute
-    if (lastPost.url[0] = "/") {
-      lastPost.url = $.url().attr("base") + lastPost.url;
+    if (postUrl[0] == "/") {
+      postUrl = purl.attr("base") + purl.attr("source")
     }
 
-    this.discussion.lastPost = lastPost;
+    let lastPost = new DiscussionPostDTO(postId, postUrl);
+    this.task.discussion.lastPost = lastPost;
+
+    return this.repo.tasks.saveById(this.task.id, this.task);
+  }
+
+  protected getButtonsFromPost($post: JQuery, state: EFaveState): JQuery[] {
+    let $buttons: JQuery[] = [];
+    if (state == EFaveState.Unfaved) {
+      $buttons = $post.find(".button-fave.unfavorited-button").not(".favorited-button").get();
+    }
+    else if (state == EFaveState.Faved) {
+      $buttons = $post.find(".button-fave.favorited-button").get();
+    }
+    return $buttons;
   }
 
   protected getUndonePosts(): JQuery[] {
-    let $posts = $(".forum-post").get();
+    let $posts = $(".forum-post").get() as HTMLElement[];
     let $result = [] as JQuery[];
 
     let $undone: JQuery[];
-    $undone = _.takeRightWhile($posts, (item) => {
-      return $(item).attr("rel") != this.discussion.lastPost.id;
-    });
 
-    debugger
-    return $undone;
+    if (this.discussion.lastPost && this.discussion.lastPost.id) {
+      $undone = _.takeRightWhile($posts, (item) => {
+        return $(item).attr("rel") != this.discussion.lastPost.id;
+      });
+    }
+    else {
+      $undone = $posts;
+    }
+    
+    return _.map($undone, (htmlElement) => {
+      return $(htmlElement);
+    })
   }
 }

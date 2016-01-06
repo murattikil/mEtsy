@@ -1,11 +1,11 @@
 class DiscussionDTO {
   id: string
   url: string;
-  lastPost: IPost;
+  lastPost: DiscussionPostDTO;
   wePosted: number;
   dateStarted: moment.Moment;
 
-  constructor(id: string, url: string, lastPost: IPost, wePosted: number, dateStarted: moment.Moment) {
+  constructor(id: string, url: string, lastPost: DiscussionPostDTO, wePosted: number, dateStarted: moment.Moment) {
     this.id = id;
     this.url = url;
     this.lastPost = lastPost;

@@ -30,6 +30,7 @@
         "typescript/Database.ts",
         "typescript/dto/ConfigDTO.ts",
         "typescript/dto/DiscussionDTO.ts",
+        "typescript/dto/DiscussionPostDTO.ts",
         "typescript/dto/FavesTrackDTO.ts",
         "typescript/dto/ListingDTO.ts",
         "typescript/dto/TaskDTO.ts",

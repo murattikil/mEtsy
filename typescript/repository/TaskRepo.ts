@@ -36,6 +36,7 @@ class TasksRepo extends BaseRepo<TaskDTO> {
 
     let t: TaskDTO = {} as TaskDTO;
     t.id = Utils.newId();
+    t.type = ETaskType.Favathon;
     t.discussion = d;
     t.status = ETaskStatus.NotStarted;
     t.dateCreated = moment();

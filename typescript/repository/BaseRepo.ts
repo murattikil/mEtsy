@@ -29,7 +29,7 @@ class BaseRepo<T> {
     return new Promise<void>((resolve, reject) => {
       let save = {};
       save[this.collectionName] = all;
-      save[this.collectionName] = JSON.stringify(save[this.collectionName]);
+      save[this.collectionName] = JSON.stringify(save[this.collectionName], null, 4);
       this.local.set(save, () => {
         if (chrome.runtime.lastError) {
           console.log("[BaseRepo]: Error in saveAll:", chrome.runtime.lastError);
