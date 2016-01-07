@@ -36,14 +36,16 @@ class BaseDiscussionFaver {
     return moment(text);
   }
 
-  protected navigateToThisDiscussion() {
+  public navigateToThisDiscussion() {
     if (window.location.href.indexOf(this.discussion.url) == -1) {
       let url = this.discussion.lastPost.url;
       Utils.gotoUrl(url);
+      return true;
     }
+    return false;
   }
 
-  protected navigateToLastPost() {
+  public navigateToLastPost(): boolean {
     let url = "";
     if (this.discussion.lastPost && this.discussion.lastPost.url) {
       url = this.discussion.lastPost.url;
@@ -54,35 +56,51 @@ class BaseDiscussionFaver {
 
     if (window.location.href != url) {
       Utils.gotoUrl(url);
+      return true;
     }
+    return false;
 
     //todo: What if the post does not exist? What url we get in window.location? The extension will cycle indefinitely then.
   }
 
-  protected saveLastPostToDb($post: JQuery): Promise<void> {
+  protected getPostDto($post: JQuery): DiscussionPostDTO {
     let $a = $post.find(".foot a");
     let purl = $a.url();
 
     let postId = purl.param("post_id");
     let postUrl = purl.attr("source");
 
+    if (postId == "" || postId == null || (typeof postId == 'undefined')) {
+      return null;
+    }
+
     if (postUrl[0] == "/") {
       postUrl = purl.attr("base") + purl.attr("source")
     }
 
     let lastPost = new DiscussionPostDTO(postId, postUrl);
-    this.task.discussion.lastPost = lastPost;
+    return lastPost;
+  }
 
+  protected saveLastPostToDb($post: JQuery): Promise<void> {
+    let postDto = this.getPostDto($post);
+
+    debugger
+    if (postDto) {
+      this.task.discussion.lastPost = postDto;
+    }
     return this.repo.tasks.saveById(this.task.id, this.task);
   }
 
   protected getButtonsFromPost($post: JQuery, state: EFaveState): JQuery[] {
     let $buttons: JQuery[] = [];
     if (state == EFaveState.Unfaved) {
-      $buttons = $post.find(".button-fave.unfavorited-button").not(".favorited-button").get();
+      $buttons = $post.find(".button-fave").not(".favorited-button").get();
+      console.log("[BaseDiscussionFaver]: Found", $buttons.length, "unfaved in post", $post);
     }
     else if (state == EFaveState.Faved) {
       $buttons = $post.find(".button-fave.favorited-button").get();
+      console.log("[BaseDiscussionFaver]: Found", $buttons.length, "faved in post", $post);
     }
     return $buttons;
   }
@@ -91,17 +109,20 @@ class BaseDiscussionFaver {
     let $posts = $(".forum-post").get() as HTMLElement[];
     let $result = [] as JQuery[];
 
-    let $undone: JQuery[];
+    let $undone: HTMLElement[];
 
     if (this.discussion.lastPost && this.discussion.lastPost.id) {
-      $undone = _.takeRightWhile($posts, (item) => {
-        return $(item).attr("rel") != this.discussion.lastPost.id;
+      $undone = _.takeRightWhile($posts, (post) => {
+        return $(post).attr("rel") != this.discussion.lastPost.id;
       });
+      $undone.push(_.find($posts, (post) => {
+        return post.id == this.discussion.lastPost.id;
+      }));
     }
     else {
       $undone = $posts;
     }
-    
+
     return _.map($undone, (htmlElement) => {
       return $(htmlElement);
     })

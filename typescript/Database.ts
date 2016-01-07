@@ -117,7 +117,6 @@ class Database {
     save["favesTrack"] = JSON.stringify(favesTrack);
     return new Promise<void>((resolve, reject) => {
       this.storage.set(save, () => {
-        console.log("[DATABASE]: Fave saved. Fave count set to:", favesTrack.count);
         resolve();
       });
     });

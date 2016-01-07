@@ -7,7 +7,7 @@ class Globals {
   static online = true; //actually do faving, liking, friending
   static username = "Grangzor";
   static startFromAnywhere = false;
-  static delayAfterPageLoad: number = 3000; //wait for fave buttons.done to initialize after page load
+  static delayAfterPageLoad: number = 20000; //wait for fave buttons.done to initialize after page load
   static maxFavesPerHour: number = 300;
   static minDelayBetweenFaves: number = 2300;
   static maxDelayBetweenFaves: number = 2700;

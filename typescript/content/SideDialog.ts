@@ -14,6 +14,7 @@ class SideDialog {
         $("#lblFavesThisHour").text(Mustache.render("Faves this hour {{ count }}/{{ max }}", { count: count, max: Globals.maxFavesPerHour }));
       });
       this.updateTasksView();
+      this.makeDatabaseButtons();
     });
   }
 
@@ -59,5 +60,28 @@ class SideDialog {
   private sendStart() {
     let msg = <IMsg> { type: "event.btnStartClicked" };
     chrome.runtime.sendMessage(msg);
+  }
+
+  private makeDatabaseButtons() {
+    let repos = [] as any[];
+    let index = 0;
+    chrome.storage.local.get(null, (res) => {
+      for (var key in res) {
+        var repo = new BaseRepo(key);
+        $("#db-buttons").append("<button> Show all " + key + "</button>");
+        $("#db-buttons").find("button").last().click(() => {
+          repo.getAll().then((res: any) => {
+            console.log("All", key, "are", res);
+          })
+        });
+        $("#db-buttons").append("<button> Delete all " + key + "</button>");
+        $("#db-buttons").find("button").last().click(() => {
+          repo.removeAll().then((res: any) => {
+            console.log("All", key, "are", res);
+          })
+        });
+        index++;
+      }
+    })
   }
 }

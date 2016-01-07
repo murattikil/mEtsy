@@ -12,7 +12,7 @@ class BaseRepo<T> {
       dflt[this.collectionName] = "[]";
       this.local.get(dflt, (result: any) => {
         let parsedArray = JSON.parse(result[this.collectionName]);
-        console.log("[BaseRepo]: Retrieved all", this.collectionName, "(len:" + parsedArray.length + ") are:", parsedArray);
+        // console.log("[BaseRepo]: Retrieved all", this.collectionName, "(len:" + parsedArray.length + ") are:", parsedArray);
         resolve(parsedArray as T[]);
       })
     });
@@ -34,24 +34,21 @@ class BaseRepo<T> {
         if (chrome.runtime.lastError) {
           console.log("[BaseRepo]: Error in saveAll:", chrome.runtime.lastError);
         }
-        console.log("[BaseRepo]: Saved all", this.collectionName, "(len:" + all.length + ") are:", all);
+        // console.log("[BaseRepo]: Saved all", this.collectionName, "(len:" + all.length + ") are:", all);
         resolve();
       });
     });
   }
 
   saveById(id: string, dto: T): Promise<void> {
+
     return this.getAll().then((all) => {
       //console.log("[BaseRepo]: SaveById: Before save:", all);
-      var exists = _.some(all, (item: any) => {
+      let index = _.findIndex(all, (item: any) => {
         return item.id == id;
       });
-      if (exists) {
-        _.each(all, (item: any) => {
-          if (item.id == id) {
-            item = dto;
-          }
-        });
+      if (index != -1) {
+        all[index] = dto;
       }
       else {
         all.push(dto);
@@ -67,5 +64,9 @@ class BaseRepo<T> {
       })
       return this.saveAll(all);
     });
+  }
+
+  removeAll(): Promise<void> {
+    return this.saveAll([]);
   }
 }
